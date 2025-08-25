@@ -2,11 +2,11 @@
 # **L100 Design Pattern Series**  
 
 This repository contains Java implementations of **Creational**, **Structural**, and **Behavioral** design patterns.  
-Each example demonstrates a **real-world scenario** to make understanding the patterns easier and more practical.
+Each example demonstrates **real-world scenarios** and includes **problem vs solution code snippets** to clearly show the benefits of using each pattern.
 
 ---
 
-## **🚀 Steps to Execute the Code**
+# **🚀 Steps to Execute the Code**
 
 ### **1. Clone the Repository**
 ```bash
@@ -15,415 +15,548 @@ cd L100-Design-Patterns
 ```
 
 ### **2. Open the Project**
-- Open the folder in **IntelliJ IDEA**, **Eclipse**, **VS Code**, or any Java IDE.
+- Open the folder in **IntelliJ IDEA**, **Eclipse**, or **VS Code**.
 - Ensure **Java JDK 8+** is installed:
 ```bash
 java -version
 ```
 
 ### **3. Run Any Pattern**
-- Each design pattern has its **own package**.
-- Open the respective folder → Find the **`Main.java`** file → **Right-click → Run**.
+Each design pattern has its own package.  
+Go to the respective folder → Open `Main.java` → **Right-click → Run**.
 
-**Alternatively, run via terminal:**
+**Or run via terminal:**
 ```bash
 cd src/creationalPatterns/singleton
 javac *.java
 java Main
 ```
 
-### **4. Project Structure**
-```
-L100-Design-Patterns/
-│── creationalPatterns/
-│   ├── singleton/
-│   ├── factory/
-│   ├── builder/
-│── structuralPatterns/
-│   ├── adapter/
-│   ├── bridge/
-│   ├── facade/
-│── behavioralPatterns/
-│   ├── observer/
-│   ├── strategy/
-│   ├── command/
-│── README.md
-```
 ---
 
 # **📌 Creational Design Patterns**  
 
-## **1. Singleton Pattern — Unique ID Generator**
-Generates **unique IDs** using a **single instance** of the `UniqueIdService`.
+## **1. Singleton Pattern — Unique ID Generator**  
+Generates **unique IDs** using a single shared instance.
 
-### Without Using Singleton
-- Multiple instances create **duplicate IDs**.
-- High **memory usage**.
-- No **central control**.
+### **Without Singleton**
+```java
+UniqueIdService obj1 = new UniqueIdService();
+UniqueIdService obj2 = new UniqueIdService();
 
-### With Singleton
-- Single instance reused everywhere.
-- Ensures **unique IDs**.
-- Saves memory.
+System.out.println(obj1.generateId());  // ID-1
+System.out.println(obj2.generateId());  // ID-1  ❌ Duplicate IDs!
+```
 
-### Advantages
-- Global access.
-- Reduced memory.
-- Centralized management.
+### **With Singleton**
+```java
+UniqueIdService service1 = UniqueIdService.getInstance();
+UniqueIdService service2 = UniqueIdService.getInstance();
 
----
+System.out.println(service1.generateId());  // ID-1 ✅
+System.out.println(service2.generateId());  // ID-2 ✅
+```
 
-## **2. Factory Pattern — Notification System**
-Creates notification objects like **Email**, **SMS**, **Push**.
-
-### Without Using Factory
-- Need to manually create objects everywhere.
-- Hard to manage when adding new notification types.
-
-### With Factory
-- Uses a central **factory method** to create objects.
-- Easy to add/remove notification types.
-
-### Advantages
-- Clean, modular, extensible.
-- Decouples creation from implementation.
+**Advantages:** Unique IDs, centralized control, reduced memory usage.
 
 ---
 
-## **3. Abstract Factory Pattern — Theme-Based GUI**
-Creates families of UI components like **Buttons** and **Checkboxes**.
+## **2. Factory Pattern — Notification System**  
+Creates notifications like **Email**, **SMS**, and **Push** dynamically.
 
-### Without Abstract Factory
-- Each UI element must be manually instantiated.
-- Difficult to maintain consistency.
+### **Without Factory**
+```java
+EmailNotification email = new EmailNotification();
+email.send();
 
-### With Abstract Factory
-- Centralized factory manages all related objects.
-- Ensures consistent look & feel.
+SMSNotification sms = new SMSNotification();
+sms.send();
+```
+❌ You must manually manage object creation everywhere.
 
-### Advantages
-- Scalable and reusable.
-- Makes adding new themes easy.
+### **With Factory**
+```java
+Notification n = NotificationFactory.createNotification("EMAIL");
+n.send();
+```
+✅ Factory decides which object to create, keeping the client clean.
 
----
-
-## **4. Builder Pattern — Robot Construction**
-Builds **complex objects** like robots step by step.
-
-### Without Builder
-- Constructors become too complex with many parameters.
-- Code readability decreases.
-
-### With Builder
-- Builds object step-by-step.
-- Allows flexible customization.
-
-### Advantages
-- Cleaner code.
-- Easier to modify.
+**Advantages:** Decouples object creation, easily extensible.
 
 ---
 
-## **5. Prototype Pattern — Game Character Cloning**
-Clones **game characters** efficiently.
+## **3. Abstract Factory Pattern — Theme-Based GUI**  
+Creates **families of related UI components**.
 
-### Without Prototype
-- Creating objects repeatedly is time-consuming.
-- Higher memory usage.
+### **Without Abstract Factory**
+```java
+Button darkBtn = new DarkButton();
+Checkbox lightCb = new LightCheckbox();
+```
+❌ Inconsistent themes, hard to manage UI.
 
-### With Prototype
-- Clone existing object instead of recreating.
-- Faster and efficient.
+### **With Abstract Factory**
+```java
+ThemeFactory themeFactory = new DarkThemeFactory();
+Button btn = themeFactory.createButton();
+Checkbox cb = themeFactory.createCheckbox();
+btn.paint();
+cb.paint();
+```
+✅ Consistent look & feel with centralized control.
 
-### Advantages
-- Saves time.
-- Improves performance.
+**Advantages:** Ensures theme consistency, easier scaling.
+
+---
+
+## **4. Builder Pattern — Robot Construction**  
+Constructs complex objects step by step.
+
+### **Without Builder**
+```java
+Robot robot = new Robot("Metal", 4, true, false, "AI-Enabled");
+```
+❌ Hard to read, error-prone with too many parameters.
+
+### **With Builder**
+```java
+Robot robot = new RobotBuilder()
+    .setMaterial("Metal")
+    .setWheels(4)
+    .setAIEnabled(true)
+    .build();
+```
+✅ Flexible, readable, and avoids constructor overloading.
+
+**Advantages:** Clean object construction, highly customizable.
+
+---
+
+## **5. Prototype Pattern — Game Character Cloning**  
+Efficiently clones **game characters**.
+
+### **Without Prototype**
+```java
+Character c1 = new Character("Warrior", 100, 50);
+Character c2 = new Character("Warrior", 100, 50); // Redundant
+```
+❌ Wastes memory by recreating objects.
+
+### **With Prototype**
+```java
+Character c1 = new Character("Warrior", 100, 50);
+Character c2 = c1.clone();
+```
+✅ Clones objects instantly.
+
+**Advantages:** Saves memory, improves performance.
 
 ---
 
 # **📌 Structural Design Patterns**  
 
-## **6. Adapter Pattern — Legacy Printer Integration**
-Bridges old printers (`OldPrinter`) with modern systems.
+## **6. Adapter Pattern — Legacy Printer Integration**  
+Connects modern systems with **old printers**.
 
-### Without Adapter
-- Cannot connect incompatible interfaces.
-- Code duplication required.
+### **Without Adapter**
+```java
+OldPrinter oldPrinter = new OldPrinter();
+oldPrinter.oldPrint("Hello");  // ❌ Doesn't match modern interface
+```
 
-### With Adapter
-- Adapts legacy printer to modern interface.
-- Promotes reusability.
+### **With Adapter**
+```java
+ModernPrinter printer = new OldPrinterAdapter(new OldPrinter());
+printer.print("Hello World!");  // ✅ Works seamlessly
+```
 
-### Advantages
-- Flexible integration.
-- No need to modify old code.
-
----
-
-## **7. Bridge Pattern — Video Streaming Platform**
-Separates **abstraction** from **implementation**.
-
-### Without Bridge
-- Class explosion when combining multiple platforms and qualities.
-
-### With Bridge
-- Separate hierarchies for platform & quality.
-- Combine dynamically.
-
-### Advantages
-- Reduces class count.
-- Increases flexibility.
+**Advantages:** Integrates incompatible systems easily.
 
 ---
 
-## **8. Composite Pattern — File System Structure**
-Handles **files** and **folders** uniformly.
+## **7. Bridge Pattern — Video Streaming**  
+Separates **platforms** and **qualities** into two hierarchies.
 
-### Without Composite
-- Different code for files vs folders.
-- Difficult recursive handling.
+### **Without Bridge**
+```java
+NetflixHD n1 = new NetflixHD();
+NetflixSD n2 = new NetflixSD();
+YouTubeHD y1 = new YouTubeHD();
+```
+❌ Class explosion when combining features.
 
-### With Composite
-- Treats files & folders the same.
-- Recursive operations become simple.
+### **With Bridge**
+```java
+StreamingPlatform netflix = new Netflix(new HDQuality());
+netflix.play();
+```
+✅ Flexible combinations without extra classes.
 
-### Advantages
-- Cleaner code.
-- Simplifies hierarchy handling.
-
----
-
-## **9. Decorator Pattern — Coffee Shop Billing**
-Adds features dynamically, e.g., Milk, Sugar, Cream.
-
-### Without Decorator
-- Multiple subclasses needed for each combination.
-- Hard to scale.
-
-### With Decorator
-- Wrap base object with decorators.
-- Add/remove features easily.
-
-### Advantages
-- Extensible.
-- Avoids subclass explosion.
+**Advantages:** Reduces class count, easy scalability.
 
 ---
 
-## **10. Facade Pattern — Bank Account Creation**
-Provides a **simplified interface**.
+## **8. Composite Pattern — File System**  
+Manages **files** and **folders** uniformly.
 
-### Without Facade
-- Client must call many services manually.
-- Complex integration.
+### **Without Composite**
+```java
+File file = new File("abc.txt", 5);
+Folder folder = new Folder("Docs");
+folder.addFile(file);
+```
+❌ Extra handling for each type separately.
 
-### With Facade
-- Single entry point handles all services internally.
+### **With Composite**
+```java
+FileSystemItem folder = new Folder("Docs");
+folder.add(new File("abc.txt", 5));
+folder.showDetails();
+```
+✅ Treats files and folders the same.
 
-### Advantages
-- Simplifies usage.
-- Reduces dependencies.
-
----
-
-## **11. Flyweight Pattern — Car Rental System**
-Reuses **shared CarModel objects**.
-
-### Without Flyweight
-- Each car creates a new model object.
-- Wastes memory.
-
-### With Flyweight
-- Reuses same CarModel where possible.
-- Stores unique details separately.
-
-### Advantages
-- Saves memory.
-- Improves efficiency.
+**Advantages:** Simplifies hierarchical data management.
 
 ---
 
-## **12. Proxy Pattern — Internet Access Control**
-Controls access based on roles.
+## **9. Decorator Pattern — Coffee Shop Billing**  
+Adds coffee customizations dynamically.
 
-### Without Proxy
-- Directly grants access to everyone.
-- Security risks.
+### **Without Decorator**
+```java
+Coffee coffee = new MilkSugarCreamCoffee();
+System.out.println(coffee.cost());  // Hardcoded combos
+```
+❌ Must create new subclasses for every combo.
 
-### With Proxy
-- Proxy validates roles before granting access.
+### **With Decorator**
+```java
+Coffee coffee = new SimpleCoffee();
+coffee = new MilkDecorator(coffee);
+coffee = new SugarDecorator(coffee);
+System.out.println(coffee.cost());  // ✅ Flexible pricing
+```
+**Advantages:** Extensible, avoids subclass explosion.
 
-### Advantages
-- Better security.
-- Access control centralized.
+---
+
+## **10. Facade Pattern — Bank Account Creation**  
+Provides a **simplified interface** for complex services.
+
+### **Without Facade**
+```java
+new KYCVerifier().verify();
+new CreditCheck().check();
+new AccountCreator().create();
+new CardService().issue();
+```
+❌ Client must manage multiple services manually.
+
+### **With Facade**
+```java
+BankAccountFacade account = new BankAccountFacade();
+account.createNewAccount();
+```
+✅ Single entry point handles all.
+
+**Advantages:** Cleaner client code, hides system complexity.
+
+---
+
+## **11. Flyweight Pattern — Car Rental System**  
+Reuses **car model objects**.
+
+### **Without Flyweight**
+```java
+Car car1 = new Car("Honda City", "Petrol", "Red");
+Car car2 = new Car("Honda City", "Petrol", "Blue"); // Redundant model data
+```
+
+### **With Flyweight**
+```java
+CarModel model = CarModelFactory.getModel("Honda City", "Petrol");
+Car car1 = new Car("Red", model);
+Car car2 = new Car("Blue", model);
+```
+✅ Reuses the same car model object.
+
+**Advantages:** Saves memory, faster performance.
+
+---
+
+## **12. Proxy Pattern — Internet Access Control**  
+Restricts **internet access** based on role.
+
+### **Without Proxy**
+```java
+RealInternetAccess access = new RealInternetAccess("Bob");
+access.grantInternetAccess();  // ❌ Everyone gets access
+```
+
+### **With Proxy**
+```java
+OfficeInternetAccess emp = new ProxyInternetAccess("Bob");
+emp.grantInternetAccess();  // ✅ Denied if unauthorized
+```
+**Advantages:** Better security, centralized control.
 
 ---
 
 # **📌 Behavioral Design Patterns**  
 
-## **13. Template Method Pattern — Food Delivery**
-Defines a **fixed workflow**.
+## **13. Template Method Pattern — Food Delivery**  
+Defines **fixed steps** for placing an order.
 
-### Without Template
-- Duplicate logic for each platform.
-- Difficult maintenance.
+### **Without Template**
+```java
+Zomato zomato = new Zomato();
+zomato.selectRestaurant();
+zomato.placeOrder();
+zomato.pay();
+zomato.deliver();
+```
+❌ Duplicate steps in every platform.
 
-### With Template
-- Common workflow in base class.
-- Subclasses override specific steps.
-
-### Advantages
-- Reduces code duplication.
-- Easier updates.
-
----
-
-## **14. Mediator Pattern — Chat Room**
-Manages communication through a **mediator**.
-
-### Without Mediator
-- All objects talk directly → complex dependencies.
-
-### With Mediator
-- Objects interact only with mediator.
-
-### Advantages
-- Simplifies communication.
-- Reduces coupling.
+### **With Template**
+```java
+FoodDeliveryApp app = new Zomato();
+app.processOrder();  // ✅ Template manages the flow
+```
+**Advantages:** Less duplication, reusable algorithm.
 
 ---
 
-## **15. Chain of Responsibility — IT Support**
-Passes requests across multiple support levels.
+## **14. Mediator Pattern — Chat Room**  
+Centralizes communication between users.
 
-### Without Chain
-- All requests handled in one class → messy code.
+### **Without Mediator**
+```java
+User a = new User("Alice");
+User b = new User("Bob");
+a.sendMessage("Hi Bob");  // ❌ Direct dependency
+b.sendMessage("Hi Alice");
+```
 
-### With Chain
-- Each level handles what it can, forwards rest.
+### **With Mediator**
+```java
+ChatMediator mediator = new ChatRoom();
+User alice = new ChatUser(mediator, "Alice");
+User bob = new ChatUser(mediator, "Bob");
+alice.send("Hi Bob");
+```
+✅ Mediator manages all communication.
 
-### Advantages
-- Clean code.
-- Flexible handling.
-
----
-
-## **16. Observer Pattern — Traffic Management**
-Updates subscribers automatically.
-
-### Without Observer
-- Must manually notify each subscriber.
-- High coupling.
-
-### With Observer
-- Publisher automatically notifies observers.
-
-### Advantages
-- Real-time updates.
-- Scalable notifications.
+**Advantages:** Reduces dependencies, clean code.
 
 ---
 
-## **17. Strategy Pattern — Delivery Options**
-Chooses algorithm dynamically.
+## **15. Chain of Responsibility — IT Support**  
+Passes issues across support levels.
 
-### Without Strategy
-- Multiple `if-else` blocks to select delivery method.
+### **Without Chain**
+```java
+if (issue.equals("password")) resetPassword();
+else if (issue.equals("install")) installSoftware();
+else if (issue.equals("server")) fixServer();
+```
+❌ Lots of conditionals, hard to manage.
 
-### With Strategy
-- Switches algorithms easily at runtime.
+### **With Chain**
+```java
+SupportHandler l1 = new Level1Handler();
+SupportHandler l2 = new Level2Handler();
+l1.setNext(l2);
+l1.handleRequest("server down");
+```
+✅ Each handler only processes relevant requests.
 
-### Advantages
-- More flexible.
-- Cleaner logic.
-
----
-
-## **18. Command Pattern — Remote Control**
-Encapsulates actions into objects.
-
-### Without Command
-- Directly executes actions → tightly coupled.
-
-### With Command
-- Commands stored, queued, undone easily.
-
-### Advantages
-- Undo/redo support.
-- Decoupled design.
+**Advantages:** Cleaner, flexible request routing.
 
 ---
 
-## **19. State Pattern — Traffic Lights**
-Encapsulates behavior per state.
+## **16. Observer Pattern — Smart Traffic System**  
+Updates multiple subscribers automatically.
 
-### Without State
-- Large switch/if blocks handle state transitions.
+### **Without Observer**
+```java
+ambulance.update();
+bus.update();
+rider.update();
+```
+❌ Manual notifications for each subscriber.
 
-### With State
-- Each state has its own class.
+### **With Observer**
+```java
+TrafficController controller = new TrafficController();
+controller.attach(new AmbulanceApp());
+controller.attach(new BusApp());
+controller.notifyObservers();
+```
+✅ Automatically updates all observers.
 
-### Advantages
-- Cleaner code.
-- Easier to extend.
-
----
-
-## **20. Visitor Pattern — Hospital Billing**
-Separates billing logic.
-
-### Without Visitor
-- Billing code spread across classes.
-
-### With Visitor
-- Visitor calculates billing separately.
-
-### Advantages
-- Easy to add operations.
-- Keeps objects clean.
+**Advantages:** Real-time notifications, low coupling.
 
 ---
 
-## **21. Interpreter Pattern — Smart Home**
-Parses and executes commands.
+## **17. Strategy Pattern — Delivery Options**  
+Chooses the best delivery mode dynamically.
 
-### Without Interpreter
-- Hardcoded logic for every command.
+### **Without Strategy**
+```java
+if (distance < 5) deliverByBike();
+else deliverByCar();
+```
+❌ Adding new methods requires code changes everywhere.
 
-### With Interpreter
-- Translates input into actions dynamically.
+### **With Strategy**
+```java
+DeliveryStrategy strategy = new BikeDelivery();
+FoodDelivery delivery = new FoodDelivery(strategy);
+delivery.deliver();
+```
+✅ Algorithms can be swapped easily.
 
-### Advantages
-- Flexible command handling.
-- Extensible for new instructions.
-
----
-
-## **22. Iterator Pattern — Playlist System**
-Traverses songs in order.
-
-### Without Iterator
-- Must manage indexes manually.
-
-### With Iterator
-- Uses `hasNext()` & `next()` for easy traversal.
-
-### Advantages
-- Cleaner code.
-- Hides data structure complexity.
+**Advantages:** Flexible, eliminates big conditional blocks.
 
 ---
 
-## **23. Memento Pattern — Text Editor Undo**
-Restores previous states.
+## **18. Command Pattern — Remote Control**  
+Encapsulates actions into command objects.
 
-### Without Memento
-- Cannot undo changes easily.
-- No state history.
+### **Without Command**
+```java
+Light light = new Light();
+light.turnOn();
+light.turnOff();
+```
+❌ Tightly coupled, cannot undo.
 
-### With Memento
-- Saves and restores object states.
+### **With Command**
+```java
+Command onCommand = new LightOnCommand(new Light());
+RemoteControl remote = new RemoteControl(onCommand);
+remote.pressButton();
+```
+✅ Supports queuing, undo, and redo.
 
-### Advantages
-- Enables undo.
-- Easy state management.
+**Advantages:** Decoupled, reusable, flexible.
+
+---
+
+## **19. State Pattern — Traffic Light System**  
+Changes behavior based on state.
+
+### **Without State**
+```java
+if (signal.equals("RED")) stop();
+else if (signal.equals("GREEN")) go();
+else wait();
+```
+❌ Becomes unmanageable with more states.
+
+### **With State**
+```java
+TrafficLight light = new TrafficLight();
+light.setState(new GreenState());
+light.change();
+```
+✅ Encapsulates each state cleanly.
+
+**Advantages:** Cleaner transitions, easier to extend.
+
+---
+
+## **20. Visitor Pattern — Hospital Billing**  
+Separates billing operations.
+
+### **Without Visitor**
+```java
+Doctor d = new Doctor();
+System.out.println(d.getBill() + lab.getBill());
+```
+❌ Adding new billing rules requires modifying all classes.
+
+### **With Visitor**
+```java
+BillVisitor visitor = new BillCalculator();
+doctor.accept(visitor);
+lab.accept(visitor);
+```
+✅ New billing operations added without touching existing classes.
+
+**Advantages:** Open for extension, closed for modification.
+
+---
+
+## **21. Interpreter Pattern — Smart Home Commands**  
+Parses natural commands into actions.
+
+### **Without Interpreter**
+```java
+if (cmd.equals("TURN ON LIGHT")) turnOnLight();
+else if (cmd.equals("SET TEMPERATURE")) setTemp(24);
+```
+❌ Adding new commands gets messy.
+
+### **With Interpreter**
+```java
+Expression expression = new CommandInterpreter("TURN ON LIGHT");
+expression.interpret();
+```
+✅ Easily extendable for new commands.
+
+**Advantages:** Clean, scalable command processing.
+
+---
+
+## **22. Iterator Pattern — Playlist System**  
+Traverses a playlist without exposing structure.
+
+### **Without Iterator**
+```java
+for (int i = 0; i < playlist.size(); i++) {
+    System.out.println(playlist.get(i));
+}
+```
+❌ Client depends on internal playlist structure.
+
+### **With Iterator**
+```java
+Iterator<String> it = playlist.iterator();
+while (it.hasNext()) {
+    System.out.println(it.next());
+}
+```
+✅ Hides complexity, works on any collection.
+
+**Advantages:** Cleaner traversal, better abstraction.
+
+---
+
+## **23. Memento Pattern — Text Editor Undo**  
+Saves and restores text versions.
+
+### **Without Memento**
+```java
+text = "Version 1";
+text = "Version 2";
+text = "Version 3";  // ❌ Cannot undo
+```
+
+### **With Memento**
+```java
+TextEditor editor = new TextEditor();
+History history = new History();
+
+editor.setText("Version 1");
+history.save(editor.save());
+
+editor.setText("Version 2");
+history.save(editor.save());
+
+editor.restore(history.undo());
+System.out.println(editor.getText());  // ✅ Version 1
+```
+**Advantages:** Enables undo/redo, manages history cleanly.
+
+---
